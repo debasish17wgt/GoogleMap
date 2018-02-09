@@ -26,11 +26,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--<meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyD85-WM&#45;&#45;Y6nc1HxYVRwsgdlUZLa4IqPbE" />-->
 
-        <activity android:name=".MainActivity">
+        <!--
+            <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyD85-WM&#45;&#45;Y6nc1HxYVRwsgdlUZLa4IqPbE" />
+        -->
+
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,12 +53,17 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".activity.MapsActivity"
             android:label="@string/title_activity_maps">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.wgt.mapintegration.MainActivity" />
+                android:value="com.wgt.mapintegration.activity.MainActivity" />
         </activity>
+
+        <service
+            android:name=".services.LocationService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.wgt.mapintegration.MainActivity">
+    tools:context="com.wgt.mapintegration.activity.MainActivity">
 
     <TextView
         android:id="@+id/tv_latitude"
@@ -87,6 +87,13 @@
         android:layout_marginTop="10dp"
         android:layout_toRightOf="@id/btn_getLocation"
         android:layout_marginLeft="10dp"/>
+    <Button
+        android:id="@+id/btn_loc_histry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location Histry"
+        android:layout_below="@id/btn_getLocation"
+        android:textAllCaps="false"/>
 
 
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package com.wgt.mapintegration;
+package com.wgt.mapintegration.activity;
 
 import android.Manifest;
 import android.content.Context;
@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -18,7 +17,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -30,28 +28,26 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.wgt.mapintegration.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class MainActivity extends AppCompatActivity
+        implements View.OnClickListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
+
     private List<String> listOfPermissions;
     private final int PERMISSION_REQUEST_CODE = 1;
 
     private TextView tv_longitude, tv_latitude;
-    private Button btn_get_location, btn_view_map;
+    private Button btn_get_location, btn_view_map, btn_loc_histry;
     private RadioGroup radio_type;
     private RadioButton radio_high, radio_medium, radio_low;
 
-    private GoogleApiClient gac;
-    private LocationRequest locationRequest;
 
-    private final String TAG = "GPS";
-    private final long UPDATE_INTERVAL = 2 * 1000;  /* 10 secs */
-    private final long FASTEST_INTERVAL = 2000;
-
-
-    private Location loc;
 
 
     @Override
@@ -66,25 +62,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         listOfPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
 
 
-        locationRequest = new LocationRequest();
-        locationRequest.setInterval(UPDATE_INTERVAL);
-        locationRequest.setFastestInterval(FASTEST_INTERVAL);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        gac = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
 
 
-    }
 
-
-    @Override
-    protected void onStop() {
-        gac.disconnect();
-        super.onStop();
     }
 
     @Override
@@ -101,21 +81,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     showAlert();
                 } else {
                     setPriority();
-                    gac.connect();
+                    //TODO :
+                    //call service to start and bind
+                    //and get data from that service
                 }
                 break;
 
             case R.id.btn_view_map :
-                if (loc != null) {
-                    /*String link = "http://maps.google.com/maps?q=loc:" + String.format("%f,%f", loc.getLatitude(), loc.getLongitude());
+                /*if (loc != null) {
+                    *//*String link = "http://maps.google.com/maps?q=loc:" + String.format("%f,%f", loc.getLatitude(), loc.getLongitude());
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-                    startActivity(intent);*/
+                    startActivity(intent);*//*
                     Intent intent = new Intent(this, MapsActivity.class);
                     intent.putExtra("location", loc);
                     startActivity(intent);
                 }else {
                     Toast.makeText(this, "Get location first", Toast.LENGTH_SHORT).show();
-                }
+                }*/
+                break;
+            case R.id.btn_loc_histry :
+
                 break;
         }
     }
@@ -125,9 +110,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv_latitude = findViewById(R.id.tv_latitude_data);
         btn_get_location = findViewById(R.id.btn_getLocation);
         btn_view_map = findViewById(R.id.btn_view_map);
+        btn_loc_histry = findViewById(R.id.btn_loc_histry);
 
         btn_get_location.setOnClickListener(this);
         btn_view_map.setOnClickListener(this);
+        btn_loc_histry.setOnClickListener(this);
 
         radio_type = findViewById(R.id.radio_loc_type);
         radio_high = findViewById(R.id.radio_high_accuracy);
@@ -181,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    //================Location & Connection methods and callbacks=====================
+    //================LocationModel & Connection methods and callbacks=====================
 
     private boolean isLocationEnabled() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -191,10 +178,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void showAlert() {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Enable Location")
-                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
+        dialog.setTitle("Enable LocationModel")
+                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable LocationModel to " +
                         "use this app")
-                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
+                .setPositiveButton("LocationModel Settings", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface paramDialogInterface, int paramInt) {
 
@@ -212,24 +199,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setPriority() {
-        if (radio_high.isChecked()) {
+       /* if (radio_high.isChecked()) {
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         } else if (radio_medium.isChecked()) {
             locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         } else if (radio_low.isChecked()) {
             locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
-        }
+        }*/
 
     }
 
-    private void call() {
-        try {
-            LocationServices.FusedLocationApi.requestLocationUpdates(gac, locationRequest, this);
-        } catch (SecurityException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "ERROR : " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
+
 
     private void updateUI(Location location) {
         tv_latitude.setText("" + location.getLatitude());
@@ -238,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        call();
+
     }
 
     @Override
@@ -254,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onLocationChanged(Location location) {
         if (location != null) {
-            loc = location;
+            //loc = location;
             updateUI(location);
         }
     }
