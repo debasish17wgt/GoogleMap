@@ -12,6 +12,8 @@ import android.support.annotation.NonNull;
 public class LocationModel {
     @NonNull
     @PrimaryKey
+    private int id;
+    @NonNull
     private String email;
     @NonNull
     private String date;
