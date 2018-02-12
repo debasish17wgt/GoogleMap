@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -13,6 +15,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CustomCap;
 import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
@@ -20,6 +23,10 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
 import com.wgt.mapintegration.R;
+import com.wgt.mapintegration.database.AppDatabase;
+import com.wgt.mapintegration.model.LocationModel;
+
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -31,13 +38,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int COLOR_ORANGE_ARGB = 0xffF57F17;
     private static final int COLOR_BLUE_ARGB = 0xffF9A825;
 
-    private static final int POLYLINE_STROKE_WIDTH_PX = 12;
+    private static final int POLYLINE_STROKE_WIDTH_PX = 5;
     private static final int POLYGON_STROKE_WIDTH_PX = 8;
     private static final int PATTERN_DASH_LENGTH_PX = 20;
     private static final int PATTERN_GAP_LENGTH_PX = 20;
 
     private GoogleMap mMap;
-    private Location location;
+    //private Location location;
+    private List<LocationModel> listOfLoc;
 
 
     @Override
@@ -50,9 +58,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         //get location from previous activity
-        Location loc = (Location) getIntent().getParcelableExtra("location");
+        /*Location loc = (Location) getIntent().getParcelableExtra("location");
         if (loc != null) {
             location = loc;
+        }*/
+        listOfLoc = AppDatabase.getDatabase(this).locationDao().getAllLocations();
+        if (listOfLoc.size() < 0 ) {
+            Toast.makeText(this, "No Location found", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -70,30 +82,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+
+        // Add polylines to the map.
+        // Polylines are useful to show a route or some other connection between points.
+        PolylineOptions options = new PolylineOptions().clickable(true);
+        if (listOfLoc != null) {
+            for (LocationModel loc : listOfLoc) {
+                options.add(new LatLng(loc.getLatitude(), loc.getLongitude()));
+            }
+        }
+
+        Polyline polyline1 = googleMap.addPolyline(options);
+        // Store a data object with the polyline, used here to indicate an arbitrary type.
+        polyline1.setTag("A");
+        // Style the polyline.
+        stylePolyline(polyline1);
+
         // Add a marker in Sydney and move the camera
-        LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.addMarker(new MarkerOptions().position(position).title("Current Position").snippet("Snippet"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(position.latitude, position.longitude), 17));
-
-
-
-
-//        // Add polylines to the map.
-//        // Polylines are useful to show a route or some other connection between points.
-//        Polyline polyline1 = googleMap.addPolyline(new PolylineOptions()
-//                .clickable(true)
-//                .add(
-//                        new LatLng(-35.016, 143.321),
-//                        new LatLng(-34.747, 145.592),
-//                        new LatLng(-34.364, 147.891),
-//                        new LatLng(-33.501, 150.217),
-//                        new LatLng(-32.306, 149.248),
-//                        new LatLng(-32.491, 147.309)));
-//        // Store a data object with the polyline, used here to indicate an arbitrary type.
-//        polyline1.setTag("A");
-//        // Style the polyline.
-//        stylePolyline(polyline1);
-
+        LatLng position = new LatLng(listOfLoc.get(listOfLoc.size()-1).getLatitude(), listOfLoc.get(listOfLoc.size()-1).getLongitude());
+        mMap.addMarker(new MarkerOptions().position(position).title("Current Position").snippet(""+listOfLoc.get(listOfLoc.size()-1).getLatitude()+","+listOfLoc.get(listOfLoc.size()-1).getLongitude()));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(position.latitude, position.longitude), 17));
+        setZoomBoundery(listOfLoc);
 
 
 
@@ -114,30 +123,57 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * Styles the polyline, based on type.
      * @param polyline The polyline object that needs styling.
      */
-//    private void stylePolyline(Polyline polyline) {
-//        String type = "";
-//        // Get the data object stored with the polyline.
-//        if (polyline.getTag() != null) {
-//            type = polyline.getTag().toString();
-//        }
-//
-//        switch (type) {
-//            // If no type is given, allow the API to use the default.
-//            case "A":
-//                // Use a custom bitmap as the cap at the start of the line.
-//                polyline.setStartCap(
-//                        new CustomCap(
-//                                BitmapDescriptorFactory.fromResource(R.mipmap.ic_launcher), 10));
-//                break;
-//            case "B":
-//                // Use a round cap at the start of the line.
-//                polyline.setStartCap(new RoundCap());
-//                break;
-//        }
-//
-//        polyline.setEndCap(new RoundCap());
-//        polyline.setWidth(POLYLINE_STROKE_WIDTH_PX);
-//        polyline.setColor(COLOR_BLACK_ARGB);
-//        polyline.setJointType(JointType.BEVEL);
-//    }
+    private void stylePolyline(Polyline polyline) {
+        String type = "";
+        // Get the data object stored with the polyline.
+        if (polyline.getTag() != null) {
+            type = polyline.getTag().toString();
+        }
+
+        switch (type) {
+            // If no type is given, allow the API to use the default.
+            case "A":
+                // Use a custom bitmap as the cap at the start of the line.
+                polyline.setStartCap(
+                        new CustomCap(
+                                BitmapDescriptorFactory.fromResource(android.R.drawable.arrow_up_float), 10));
+                break;
+            case "B":
+                // Use a round cap at the start of the line.
+                polyline.setStartCap(new RoundCap());
+                break;
+        }
+
+        polyline.setEndCap(new RoundCap());
+        polyline.setWidth(POLYLINE_STROKE_WIDTH_PX);
+        polyline.setColor(COLOR_GREEN_ARGB);
+        polyline.setJointType(JointType.BEVEL);
+    }
+
+    private void setZoomBoundery(List<LocationModel> list) {
+        if (list== null || list.size() == 0 ) {
+            return;
+        }
+
+        /**create for loop/manual to add LatLng's to the LatLngBounds.Builder*/
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (LocationModel ll : list) {
+            builder.include(new LatLng(ll.getLatitude(), ll.getLongitude()));
+        }
+
+        /**initialize the padding for map boundary*/
+        int padding = 50;
+        /**create the bounds from latlngBuilder to set into map camera*/
+        LatLngBounds bounds = builder.build();
+        /**create the camera with bounds and padding to set into map*/
+        final CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        /**call the map call back to know map is loaded or not*/
+        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                /**set animated zoom camera into map*/
+                mMap.animateCamera(cu);
+            }
+        });
+    }
 }

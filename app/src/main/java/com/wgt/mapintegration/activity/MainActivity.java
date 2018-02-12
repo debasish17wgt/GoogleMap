@@ -176,6 +176,12 @@ public class MainActivity extends AppCompatActivity
                 }else {
                     Toast.makeText(this, "Get location first", Toast.LENGTH_SHORT).show();
                 }*/
+                if (AppDatabase.getDatabase(this).locationDao().getAllLocations().size() > 0) {
+                    Intent intent = new Intent(this, MapsActivity.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(locationService, "No data to show", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.btn_loc_histry:
                 List<LocationModel> list = AppDatabase.getDatabase(this).locationDao().getAllLocations();
@@ -185,8 +191,9 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 for(LocationModel loc : list) {
-                    data.concat("LAT : "+loc.getLatitude()+" LON"+loc.getLongitude());
-                    data.concat("\n");
+                    data += "LAT : "+loc.getLatitude()+" LON : "+loc.getLongitude()+"\n";
+                    /*data.concat("LAT : "+loc.getLatitude()+" LON"+loc.getLongitude());
+                    data.concat("\n");*/
                 }
                 showLocation(data);
                 break;

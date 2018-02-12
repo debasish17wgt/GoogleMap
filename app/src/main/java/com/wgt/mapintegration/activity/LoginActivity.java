@@ -146,6 +146,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Toast.makeText(LoginActivity.this, "Logout successful", Toast.LENGTH_SHORT).show();
                             btn_google_login.setText("Sign in with Google");
                             btn_login.setVisibility(View.INVISIBLE);
+                            iv_pic.setImageResource(R.drawable.user);
+                            tv_name.setText("NAME");
+                            tv_email.setText("EMAIL");
                         } else {
                             //TODO: logout failed
                             Toast.makeText(LoginActivity.this, "Failed to logout", Toast.LENGTH_SHORT).show();
