@@ -5,9 +5,12 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
+import com.wgt.mapintegration.dao.LocationDao;
+import com.wgt.mapintegration.dao.UserDao;
 import com.wgt.mapintegration.model.LocationModel;
+import com.wgt.mapintegration.model.UserModel;
 
-@Database(entities = {LocationModel.class}, version = 1, exportSchema = false)
+@Database(entities = {LocationModel.class, UserModel.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
 
@@ -30,9 +33,8 @@ public abstract class AppDatabase extends RoomDatabase {
         INSTANCE = null;
     }
 
-    /*public abstract UserDAO userDAO();
+    public abstract UserDao userDao();
+    public abstract LocationDao locationDao();
 
-    public abstract TransactionDAO transactionDAO();
 
-    public abstract BillDAO billDAO();*/
 }

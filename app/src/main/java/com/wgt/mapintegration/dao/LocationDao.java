@@ -21,5 +21,5 @@ public interface LocationDao {
     List<LocationModel> getAllLocations();
 
     @Query("SELECT * FROM LocationModel WHERE email = :email")
-    List<LocationModel> getAllLocations(String email);
+    List<LocationModel> getAllLocationsByEmail(String email);
 }

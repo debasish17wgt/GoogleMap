@@ -1,6 +1,7 @@
 package com.wgt.mapintegration.model;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -8,10 +9,13 @@ import android.support.annotation.NonNull;
  * Created by debasish on 09-02-2018.
  */
 
-@Entity
+@Entity(foreignKeys = @ForeignKey(entity = UserModel.class,
+        parentColumns = "email",
+        childColumns = "email"))
+
 public class LocationModel {
-    @NonNull
-    @PrimaryKey
+
+    @PrimaryKey(autoGenerate = true)
     private int id;
     @NonNull
     private String email;
@@ -31,6 +35,15 @@ public class LocationModel {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
 
     public String getEmail() {
         return email;

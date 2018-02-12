@@ -1,7 +1,9 @@
 package com.wgt.mapintegration.model;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 /**
  * Created by root on 10/2/18.
@@ -10,11 +12,15 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class UserModel {
 
+    @NonNull
     @PrimaryKey
     private String email;
     private String name;
     private String picLoc;
+    @Ignore
     private boolean loggedStatus;
+
+    public UserModel() {}
 
     public UserModel(String email, String name, String picLoc, boolean loggedStatus) {
         this.email = email;

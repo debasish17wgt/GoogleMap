@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "978790730287",
+    "project_id": "mapintegration-1518068577338"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:978790730287:android:b1a9d9b9458a9c6c",
+        "android_client_info": {
+          "package_name": "com.wgt.mapintegration"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "978790730287-sidlpjn0b5pddqtnhuurer81f33h0oj8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wgt.mapintegration",
+            "certificate_hash": "d49fa2204587c462d4ba0528d8a4d86950afdc2c"
+          }
+        },
+        {
+          "client_id": "978790730287-sj2o8qmhtctkplave6q211c2qs8o9t2t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcQBwKdjOO6_lqNouBKOD80O4zeKgNTTU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
